@@ -5,8 +5,8 @@ just pass in the viewbinding of the adapter layout and the count of items held b
 ![alt text](https://github.com/robertgendy7/DirectAdapter/blob/master/Screen%20Shot%202021-04-07%20at%204.48.31%20PM.png)
 
 ## How it works 
-the library useses reflection and view binding , it useses reflection to call the inflation methods
-on the viewbinding instance and then useses callbacks according to the cycle of the RecyclerView.Adapter 
+the library uses reflection and view binding , it uses reflection to call the inflation methods
+on the viewbinding instance and then uses callbacks according to the cycle of the RecyclerView.Adapter 
 class , the base class for all the adapter is the ```DirectAdapter``` class which is a recyler view adapter 
 of ```GenericViewHolder```.
 
