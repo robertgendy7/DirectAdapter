@@ -4,18 +4,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
-open class DirectAdapter(var targetViewBinding: ViewBinding?, private val count:Int, private val f:(ViewBinding, Int)->Unit): RecyclerView.Adapter<GenericViewHolder>() {
+open class DirectAdapter(var targetViewBinding: ViewBinding?, private val count:Int, private val f:(GenericViewHolder, Int)->Unit): RecyclerView.Adapter<GenericViewHolder>() {
 
     private var onBindViewHolder:((holder: GenericViewHolder, position: Int,payloads: MutableList<Any>)->Unit)?=null
     private var getItemViewType:((position: Int)->Int)?=null
     private var onViewRecycled:((holder: GenericViewHolder)->Unit)?=null
-    private var setHasStableIds:((hasStableIds: Boolean)->Unit)?=null
     private var getItemId:((position: Int)->Long)?=null
     private var onFailedToRecycleView:((holder: GenericViewHolder)->Boolean)?=null
-    private var onViewAttachedToWindow:((holder: GenericViewHolder)->Boolean)?=null
-    private var onViewDetachedFromWindow:((holder: GenericViewHolder)->Boolean)?=null
-    private var registerAdapterDataObserver:((observer: RecyclerView.AdapterDataObserver)->Unit)?=null
-    private var unregisterAdapterDataObserver:((observer: RecyclerView.AdapterDataObserver)->Unit)?=null
+    private var onViewAttachedToWindow:((holder: GenericViewHolder)->Unit)?=null
+    private var onViewDetachedFromWindow:((holder: GenericViewHolder)->Unit)?=null
     private var onAttachedToRecyclerView:((recyclerView: RecyclerView)->Unit)?=null
     private var onDetachedFromRecyclerView:((recyclerView: RecyclerView)->Unit)?=null
 
@@ -31,9 +28,7 @@ open class DirectAdapter(var targetViewBinding: ViewBinding?, private val count:
         onViewRecycled=action
     }
 
-    fun setHasStableIdsAction(action:((hasStableIds: Boolean)->Unit)){
-        setHasStableIds=action
-    }
+
 
     fun getItemIdAction(action:(position: Int)->Long){
         getItemId=action
@@ -43,20 +38,15 @@ open class DirectAdapter(var targetViewBinding: ViewBinding?, private val count:
         onFailedToRecycleView=action
     }
 
-    fun onViewAttachedToWindowAction(action:(holder: GenericViewHolder)->Boolean){
+    fun onViewAttachedToWindowAction(action:(holder: GenericViewHolder)->Unit){
         onViewAttachedToWindow=action
     }
 
-    fun onViewDetachedFromWindow(action:(holder: GenericViewHolder)->Boolean){
+    fun onViewDetachedFromWindow(action:(holder: GenericViewHolder)->Unit){
         onViewDetachedFromWindow=action
     }
 
-    fun registerAdapterDataObserverAction(action:(observer: RecyclerView.AdapterDataObserver)->Unit){
-        registerAdapterDataObserver=action
-    }
-    fun unregisterAdapterDataObserverAction(action:(observer: RecyclerView.AdapterDataObserver)->Unit){
-        unregisterAdapterDataObserver=action
-    }
+
     fun onAttachedToRecyclerViewAction(action:(recyclerView: RecyclerView)->Unit){
         onAttachedToRecyclerView=action
     }
@@ -68,45 +58,48 @@ open class DirectAdapter(var targetViewBinding: ViewBinding?, private val count:
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenericViewHolder {
         if(targetViewBinding==null)
-            throw IllegalArgumentException("Target view binding is null")
+            throw IllegalArgumentException("Target view binding is null ")
 
         val binding = inflateByReflection(targetViewBinding!!,parent)
-        return GenericViewHolder(targetViewBinding!!, binding.root)
+        return GenericViewHolder(targetViewBinding!!, binding.root,viewType)
     }
 
     override fun onBindViewHolder(holder: GenericViewHolder, position: Int) {
-        f.invoke(holder.binding,position)
+        f.invoke(holder,position)
     }
+
+
 
     override fun getItemCount(): Int {
         return count
     }
+
 
     override fun onBindViewHolder(
         holder: GenericViewHolder,
         position: Int,
         payloads: MutableList<Any>
     ) {
-        super.onBindViewHolder(holder, position, payloads)
         onBindViewHolder?.invoke(holder, position, payloads)
+        super.onBindViewHolder(holder, position, payloads)
     }
 
+
+   /**
+    * super returns 0 #[RecyclerView.Adapter.getItemViewType]
+    */
     override fun getItemViewType(position: Int): Int {
         return if(getItemViewType==null){
             super.getItemViewType(position)
         }else{
             getItemViewType!!.invoke(position)
+
         }
     }
 
-    override fun setHasStableIds(hasStableIds: Boolean) {
-        return if(setHasStableIds==null){
-            super.setHasStableIds(hasStableIds)
-        }else{
-            setHasStableIds!!.invoke(hasStableIds)
-        }
-    }
-
+    /**
+     * super returns #[RecyclerView.NO_ID] == -1 #[RecyclerView.Adapter.getItemId]
+     */
     override fun getItemId(position: Int): Long {
         return if(getItemId==null){
             super.getItemId(position)
@@ -116,11 +109,16 @@ open class DirectAdapter(var targetViewBinding: ViewBinding?, private val count:
     }
 
 
+    /**
+     * super does nothing #[RecyclerView.Adapter.onViewRecycled]
+     */
     override fun onViewRecycled(holder: GenericViewHolder) {
         onViewRecycled?.invoke(holder)
-        super.onViewRecycled(holder)
     }
 
+    /**
+     * super returns false  #[RecyclerView.Adapter.onFailedToRecycleView]
+     */
     override fun onFailedToRecycleView(holder: GenericViewHolder): Boolean {
         return if(onFailedToRecycleView==null){
             super.onFailedToRecycleView(holder)
@@ -130,34 +128,33 @@ open class DirectAdapter(var targetViewBinding: ViewBinding?, private val count:
 
     }
 
+    /**
+     * super does nothing #[RecyclerView.Adapter.onViewAttachedToWindow]
+     */
     override fun onViewAttachedToWindow(holder: GenericViewHolder) {
         onViewAttachedToWindow?.invoke(holder)
-        super.onViewAttachedToWindow(holder)
     }
 
+    /**
+     * super does nothing #[RecyclerView.Adapter.onViewDetachedFromWindow]
+     */
     override fun onViewDetachedFromWindow(holder: GenericViewHolder) {
         onViewDetachedFromWindow?.invoke(holder)
-        super.onViewDetachedFromWindow(holder)
-
     }
 
-    override fun registerAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
-        registerAdapterDataObserver?.invoke(observer)
-        super.registerAdapterDataObserver(observer)
-    }
-
-    override fun unregisterAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
-        unregisterAdapterDataObserver?.invoke(observer)
-        super.unregisterAdapterDataObserver(observer)
-    }
-
+    /**
+     * super does nothing #[RecyclerView.Adapter.onAttachedToRecyclerView]
+     */
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         onAttachedToRecyclerView?.invoke(recyclerView)
-        super.onAttachedToRecyclerView(recyclerView)
     }
 
+    /**
+     * super does nothing #[RecyclerView.Adapter.onDetachedFromRecyclerView]
+     */
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         onDetachedFromRecyclerView?.invoke(recyclerView)
-        super.onDetachedFromRecyclerView(recyclerView)
     }
 }
+
+

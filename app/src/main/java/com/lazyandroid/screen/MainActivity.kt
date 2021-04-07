@@ -2,39 +2,37 @@ package com.lazyandroid.screen
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewbinding.ViewBinding
-import com.lazyandroid.directadapter.SingleLayoutAdapter
-import com.lazyandroid.directadapter.setLinearLayoutManager
+import androidx.fragment.app.Fragment
 import com.lazyandroid.screen.databinding.ActivityMainBinding
-import com.lazyandroid.screen.databinding.AdapterLayoutBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var adapterLayoutBinding: AdapterLayoutBinding
-
+    private lateinit var fragment:Fragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
-        adapterLayoutBinding= AdapterLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val mAdapter=SingleLayoutAdapter(adapterLayoutBinding,10){ viewBinding: ViewBinding, i: Int ->
-            viewBinding as AdapterLayoutBinding
-            viewBinding.textView.text="UI:${i+1}"
-        }.also {
-            it.onFailedToRecycleViewAction {
-                TODO()
-            }
-
-            it.onViewRecycledAction {
-
-            }
+        supportFragmentManager.beginTransaction().also {
+            fragment=SingleLayoutAdapterExample.getFragment()
+            it.replace(binding.fragmentContainer.id,fragment)
+            it.commit()
         }
 
-        binding.recyclerView.apply {
-            setLinearLayoutManager(this@MainActivity)
-            adapter=mAdapter
+        binding.displayButton.setOnClickListener {
+
+           if(fragment is SingleLayoutAdapterExample){
+               fragment=MultiLayoutAdapterExample.getFragment()
+           }else if(fragment is MultiLayoutAdapterExample){
+               fragment=SingleLayoutAdapterExample.getFragment()
+           }
+            supportFragmentManager.beginTransaction().also {
+                it.replace(R.id.fragmentContainer,fragment)
+                it.commit()
+            }
+
         }
+
     }
 }
