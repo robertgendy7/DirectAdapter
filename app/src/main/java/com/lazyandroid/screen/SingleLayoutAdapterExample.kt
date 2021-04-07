@@ -32,6 +32,9 @@ class SingleLayoutAdapterExample:Fragment() {
                layout.textView.text="UI $i"
             }
         }
+
+
+
         return binding.root
     }
 
