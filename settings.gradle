@@ -1,0 +1,3 @@
+include ':DirectAdapter'
+include ':app'
+rootProject.name = "Screen"
