@@ -18,7 +18,7 @@ of ```GenericViewHolder```.
 ![alt text](https://github.com/robertgendy7/DirectAdapter/blob/master/Screen%20Shot%202021-04-07%20at%204.54.54%20PM.png)
 
 ## How to use
-download the code and then import the DirectAdapter module to your project and add it to the dependancies 
+download the code then import the DirectAdapter module to your project and add it to the dependancies 
 of your desired module in the project structure.
 
 ### pros: 
