@@ -26,7 +26,7 @@ of your desired module in the project structure.
 - activity code is a bit linear so you dont have to dance around classes in development
 
 ### cons :
-- slower preformance since it useses reflection than that of the standard way.
+- slower preformance since it uses reflection than that of the standard way.
 
 ##### contact me 
 ###### linkedin : https://www.linkedin.com/in/robert-maurice-a43b0b1b1/ <br />
