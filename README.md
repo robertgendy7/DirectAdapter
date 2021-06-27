@@ -6,8 +6,8 @@ just pass in the viewbinding of the adapter layout and the count of items held b
 
 ## How it works 
 the library uses reflection and view binding , it uses reflection to call the inflation methods
-on the viewbinding instance and then uses callbacks according to the cycle of the RecyclerView.Adapter 
-class , the base class for all the adapter is the ```DirectAdapter``` class which is a recyler view adapter 
+on the view binding instance then uses callbacks according to the cycle of the RecyclerView.Adapter 
+class , the base class for all adapters is the ```DirectAdapter``` class which is a recyler view adapter 
 of ```GenericViewHolder```.
 
 ### Adapter for a single layout
@@ -26,7 +26,7 @@ of your desired module in the project structure.
 - activity code is a bit linear so you dont have to dance around classes in development
 
 ### cons :
-- slower preformance than that of the standard way.
+- slower preformance since it useses reflection than that of the standard way.
 
 ##### contact me 
 ###### linkedin : https://www.linkedin.com/in/robert-maurice-a43b0b1b1/ <br />
